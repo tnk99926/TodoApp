@@ -1,5 +1,8 @@
 package com.codestep.TODOapp;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,10 +14,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
 
 
 @Configuration
@@ -39,20 +41,28 @@ public class TODOappSecurityConfig {
 
        return http.build();
    }
+   
+   @Autowired
+   private DataSource dataSource;
 
    @Bean
    public UserDetailsService userDetailsService() {
-       String username = "user";
-       String password = "pass";
-
-       UserDetails user = User.withUsername(username)
-               .password(
-                       PasswordEncoderFactories
-                               .createDelegatingPasswordEncoder()
-                               .encode(password))
-               .roles("USER")
-               .build();
-
-       return new InMemoryUserDetailsManager(user);
+       JdbcUserDetailsManager users = new JdbcUserDetailsManager(this.dataSource);
+       
+       users.createUser(makeUser("taro","yamada","USER"));
+       users.createUser(makeUser("hanako","flower","USER"));
+       users.createUser(makeUser("sachiko","happy","USER"));
+       
+       return users;
+   }
+   
+   private UserDetails makeUser(String user, String pass, String role) {
+	   return User.withUsername(user)
+		.password(
+		PasswordEncoderFactories
+		.createDelegatingPasswordEncoder()
+		.encode(pass))
+		.roles(role)
+		.build();
    }
 }
