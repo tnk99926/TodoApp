@@ -28,7 +28,8 @@ public class TODOappSecurityConfig {
                .anyRequest().permitAll()
                );
        http.formLogin(form -> form
-               .defaultSuccessUrl("/secret"));
+               .defaultSuccessUrl("/secret")
+               .loginPage("/login"));
        http.logout(LogoutConfigurer::permitAll);
 
        return http.build();
