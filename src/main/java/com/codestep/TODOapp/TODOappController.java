@@ -21,12 +21,23 @@ public class TODOappController {
 	}
 	
 	@RequestMapping("/secret")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("isAuthenticated()")
 	public ModelAndView secret(ModelAndView mav, HttpServletRequest request) {
 		String user = request.getRemoteUser();
 		String msg = "This is secret page. [login by \"" + user + "\"]";
-		mav.setViewName("Secret");
+		mav.setViewName("secret");
 		mav.addObject("title", "Secret page");
+		mav.addObject("msg", msg);
+		return mav;
+	}
+	
+	@RequestMapping("/admin")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ModelAndView admin(ModelAndView mav, HttpServletRequest request) {
+		String user = request.getRemoteUser();
+		String msg = "This is admin page. [login by \"" + user + "\"]";
+		mav.setViewName("admin");
+		mav.addObject("title", "Admin page");
 		mav.addObject("msg", msg);
 		return mav;
 	}
