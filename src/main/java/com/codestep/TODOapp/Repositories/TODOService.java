@@ -17,7 +17,7 @@ public class TODOService {
 	TODORepository TODORepository;
 	
 	public TODOItem create(String username, TODOItem item) {
-		item.setName(username);
+		item.setUserName(username);
 		item.setCreated(LocalDate.now());
 		item.setDone(0);
 		TODORepository.saveAndFlush(item);

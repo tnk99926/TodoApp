@@ -26,7 +26,7 @@ public class TODOItem {
 	private long id;
 	
 	@Column(nullable = false)
-	private String name;
+	private String userName;
 	
 	@Column(length = 50, nullable = false)
 	@Size(max = 50, message="内容は50文字以下で入力してください")
