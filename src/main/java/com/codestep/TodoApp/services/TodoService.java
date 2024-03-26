@@ -1,27 +1,27 @@
-package com.codestep.TODOapp.services;
+package com.codestep.TodoApp.services;
 
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.codestep.TODOapp.Repositories.TODORepository;
-import com.codestep.TODOapp.entities.TODOItem;
+import com.codestep.TodoApp.Repositories.TodoRepository;
+import com.codestep.TodoApp.entities.TodoItem;
 
 import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
-public class TODOService {
+public class TodoService {
 	
 	@Autowired
-	TODORepository TODORepository;
+	TodoRepository todoRepository;
 	
-	public TODOItem create(String username, TODOItem item) {
+	public TodoItem create(String username, TodoItem item) {
 		item.setUserName(username);
 		item.setCreated(LocalDate.now());
 		item.setDone(0);
-		TODORepository.saveAndFlush(item);
+		todoRepository.saveAndFlush(item);
 		return item;
 	}
 }

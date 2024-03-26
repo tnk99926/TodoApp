@@ -1,4 +1,4 @@
-package com.codestep.TODOapp;
+package com.codestep.TodoApp;
 
 import javax.sql.DataSource;
 
@@ -18,7 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableMethodSecurity
 
-public class TODOappSecurityConfig {
+public class TodoAppSecurityConfig {
    @Bean
    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
        

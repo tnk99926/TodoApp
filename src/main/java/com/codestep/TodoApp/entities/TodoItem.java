@@ -1,4 +1,4 @@
-package com.codestep.TODOapp.entities;
+package com.codestep.TodoApp.entities;
 
 import java.time.LocalDate;
 
@@ -16,9 +16,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
-@Table(name = "TODOItem")
+@Table(name = "TodoItem")
 @Data
-public class TODOItem {
+public class TodoItem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column

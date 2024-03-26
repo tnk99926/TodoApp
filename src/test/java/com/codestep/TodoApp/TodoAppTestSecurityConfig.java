@@ -1,4 +1,4 @@
-package com.codestep.TODOapp;
+package com.codestep.TodoApp;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @TestConfiguration
 @EnableMethodSecurity
 
-public class TODOappTestSecurityConfig {
+public class TodoAppTestSecurityConfig {
    @Bean
    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
        

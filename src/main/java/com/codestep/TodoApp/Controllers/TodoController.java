@@ -1,4 +1,4 @@
-package com.codestep.TODOapp.Controllers;
+package com.codestep.TodoApp.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.codestep.TODOapp.entities.TODOItem;
-import com.codestep.TODOapp.services.TODOService;
+import com.codestep.TodoApp.entities.TodoItem;
+import com.codestep.TodoApp.services.TodoService;
 
 @Controller
-public class TODOController {
+public class TodoController {
 	
 	@Autowired
-	TODOService TODOService;
+	TodoService todoService;
 	
 	@GetMapping("/add")
 	@PreAuthorize("isAuthenticated()")
-	public ModelAndView showAddForm(ModelAndView mav, @ModelAttribute TODOItem item) {
+	public ModelAndView showAddForm(ModelAndView mav, @ModelAttribute TodoItem item) {
 		mav.addObject("item", item);
 		mav.setViewName("/add");
 		return mav;
@@ -30,7 +30,7 @@ public class TODOController {
 	
 	@PostMapping("/add")
 	@PreAuthorize("isAuthenticated()")
-	public ModelAndView PostAddForm(ModelAndView mav, @ModelAttribute("item") @Validated TODOItem item, BindingResult result) {
+	public ModelAndView PostAddForm(ModelAndView mav, @ModelAttribute("item") @Validated TodoItem item, BindingResult result) {
 		if (result.hasErrors()) {
 			mav.addObject("item", item);
 			mav.setViewName("/add");
@@ -38,7 +38,7 @@ public class TODOController {
 		}
 		
 		String name = SecurityContextHolder.getContext().getAuthentication().getName(); 
-		TODOService.create(name, item);
+		todoService.create(name, item);
 		mav.addObject("item", item);
 		mav.setViewName("redirect:/add");
 		return mav;

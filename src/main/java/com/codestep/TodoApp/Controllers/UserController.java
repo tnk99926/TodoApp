@@ -1,4 +1,4 @@
-package com.codestep.TODOapp.Controllers;
+package com.codestep.TodoApp.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

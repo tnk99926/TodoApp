@@ -1,4 +1,4 @@
-package com.codestep.TODOapp;
+package com.codestep.TodoApp;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -20,7 +20,7 @@ class LoginControllerTest {
 	private MockMvc mockMvc;
 	
 	@Autowired
-	private TODOappApplication controller;
+	private TodoAppApplication controller;
 	
 	@Test
 	void contextLoads() {
