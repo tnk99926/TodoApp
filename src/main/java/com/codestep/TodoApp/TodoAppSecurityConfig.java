@@ -1,4 +1,4 @@
-package com.codestep.TODOapp;
+package com.codestep.TodoApp;
 
 import javax.sql.DataSource;
 
@@ -10,15 +10,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 
 @Configuration
 @EnableMethodSecurity
 
-public class TODOappSecurityConfig {
+public class TodoAppSecurityConfig {
    @Bean
    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
        
@@ -40,7 +40,7 @@ public class TODOappSecurityConfig {
    private DataSource dataSource;
    
    @Bean
-   public UserDetailsService userDetailsService() {
+   public UserDetailsManager userDetailsManager() {
 	   return new JdbcUserDetailsManager(this.dataSource);
    }
 }
