@@ -1,13 +1,13 @@
-package com.codestep.TODOapp;
+package com.codestep.TodoApp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TODOappApplication {
+public class TodoAppApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TODOappApplication.class, args);
+		SpringApplication.run(TodoAppApplication.class, args);
 	}
 
 }
