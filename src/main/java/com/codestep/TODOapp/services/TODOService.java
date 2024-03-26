@@ -1,11 +1,12 @@
-package com.codestep.TODOapp.Repositories;
+package com.codestep.TODOapp.services;
 
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.codestep.TODOapp.TODOItem;
+import com.codestep.TODOapp.Repositories.TODORepository;
+import com.codestep.TODOapp.entities.TODOItem;
 
 import jakarta.transaction.Transactional;
 

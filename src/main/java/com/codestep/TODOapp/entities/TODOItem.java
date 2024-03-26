@@ -1,4 +1,4 @@
-package com.codestep.TODOapp;
+package com.codestep.TODOapp.entities;
 
 import java.time.LocalDate;
 

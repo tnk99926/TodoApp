@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.codestep.TODOapp.TODOItem;
-import com.codestep.TODOapp.Repositories.TODOService;
+import com.codestep.TODOapp.entities.TODOItem;
+import com.codestep.TODOapp.services.TODOService;
 
 @Controller
 public class TODOController {
