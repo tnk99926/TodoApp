@@ -1,4 +1,4 @@
-package com.codestep.TodoApp.Controllers;
+package com.codestep.TODOapp;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -9,7 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
-public class LoginController {
+public class TODOappController {
 	
 	@RequestMapping("/")
 	@PreAuthorize("permitAll")
