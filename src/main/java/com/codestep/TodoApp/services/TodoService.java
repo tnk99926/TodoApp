@@ -1,6 +1,7 @@
 package com.codestep.TodoApp.services;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,5 +24,9 @@ public class TodoService {
 		item.setDone(0);
 		todoRepository.saveAndFlush(item);
 		return item;
+	}
+	
+	public List<TodoItem> findAll(){
+		return todoRepository.findAll();
 	}
 }
