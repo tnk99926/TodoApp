@@ -1,4 +1,4 @@
-package com.codestep.TodoApp.Repositories;
+package com.codestep.TodoApp.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

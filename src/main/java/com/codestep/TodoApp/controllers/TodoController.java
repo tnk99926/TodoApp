@@ -1,4 +1,4 @@
-package com.codestep.TodoApp.Controllers;
+package com.codestep.TodoApp.controllers;
 
 import java.util.List;
 

@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.codestep.TodoApp.Repositories.TodoRepository;
 import com.codestep.TodoApp.entities.TodoItem;
+import com.codestep.TodoApp.repositories.TodoRepository;
 
 import jakarta.transaction.Transactional;
 

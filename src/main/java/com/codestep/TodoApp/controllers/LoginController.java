@@ -1,4 +1,4 @@
-package com.codestep.TodoApp.Controllers;
+package com.codestep.TodoApp.controllers;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
