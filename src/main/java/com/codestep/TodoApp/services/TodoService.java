@@ -29,4 +29,26 @@ public class TodoService {
 	public List<TodoItem> findAll(){
 		return todoRepository.findAll();
 	}
+	
+	public List<TodoItem> findByUserName(String username) {
+		return todoRepository.findByUserName(username);
+	}
+	
+	public TodoItem getById(long id) {
+		return todoRepository.getReferenceById(id);
+	}
+	
+	public String getStrDone(TodoItem todoItem) {
+		switch(todoItem.getDone()) {
+		case 1 ->{
+			return "着手中";
+		}
+		case 2 ->{
+			return  "完了";
+		}
+		default ->{
+			return  "未着手";
+		}
+	}
+	}
 }

@@ -7,11 +7,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -23,6 +25,10 @@ public class TodoController {
 	
 	@Autowired
 	TodoService todoService;
+	
+	@Autowired
+	UserDetailsManager userDetailsManager;
+	
 	
 	@GetMapping("/add")
 	@PreAuthorize("isAuthenticated()")
@@ -48,12 +54,20 @@ public class TodoController {
 		return mav;
 	}
 	
-	record TodoItemEx(TodoItem item, boolean caution, boolean overdue) {
+	record TodoItemEx(TodoItem item, String strDone, boolean caution, boolean overdue) {
 	};
 	
 	@GetMapping("/list")
+	@PreAuthorize("isAuthenticated()")
 	public ModelAndView showList(ModelAndView mav) {
-		List<TodoItem> list = todoService.findAll();
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		var user = userDetailsManager.loadUserByUsername(username);
+		List<TodoItem> list;
+		if (user.getAuthorities().stream().allMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
+			list = todoService.findAll();
+		} else {
+			list = todoService.findByUserName(username);
+		}
 		
 		LocalDate now = LocalDate.now();
 		
@@ -62,23 +76,54 @@ public class TodoController {
 		List<TodoItemEx> listEx = new ArrayList<>();
 		
 		for(TodoItem todoItem : list) {
+			String strDone = todoService.getStrDone(todoItem);
+			
 			LocalDate deadline = todoItem.getDeadline();
 			TodoItemEx todoItemEx;
 			if (deadline == null) {
-				todoItemEx = new TodoItemEx(todoItem, false, false);
+				todoItemEx = new TodoItemEx(todoItem, strDone, false, false);//期日未設定
 			} else if(todoItem.getDone() == 2) {
-				todoItemEx = new TodoItemEx(todoItem, false, false);
+				todoItemEx = new TodoItemEx(todoItem, strDone, false, false);//完了済み
 			} else if(deadline.isBefore(now)){
-				todoItemEx = new TodoItemEx(todoItem, true, true);
+				todoItemEx = new TodoItemEx(todoItem, strDone, true, true);//期日超過
 			} else{
-				todoItemEx = new TodoItemEx(todoItem, deadline.isBefore(notifyDt), false);
+				todoItemEx = new TodoItemEx(todoItem, strDone, deadline.isBefore(notifyDt), false);//期日7日前とそれ以外をisBeforeで判定
 			}
+			
 			listEx.add(todoItemEx);
 		}
 		
-		
+		mav.addObject("loginUserName",username);
+		mav.addObject("role",user.getAuthorities());
 		mav.addObject("listEx",listEx);
 		mav.setViewName("list");
+		return mav;
+	}
+	
+	@GetMapping("/item/{id}")
+	@PreAuthorize("isAuthenticated()")
+	public ModelAndView showItem(ModelAndView mav, @PathVariable int id) {
+		TodoItem todoItem = todoService.getById(id);
+		LocalDate now = LocalDate.now();
+		
+		LocalDate notifyDt = now.plusDays(7);
+		
+		String strDone = todoService.getStrDone(todoItem);
+		
+		LocalDate deadline = todoItem.getDeadline();
+		TodoItemEx todoItemEx;
+		if (deadline == null) {
+			todoItemEx = new TodoItemEx(todoItem, strDone, false, false);//期日未設定
+		} else if(todoItem.getDone() == 2) {
+			todoItemEx = new TodoItemEx(todoItem, strDone, false, false);//完了済み
+		} else if(deadline.isBefore(now)){
+			todoItemEx = new TodoItemEx(todoItem, strDone, true, true);//期日超過
+		} else {
+			todoItemEx = new TodoItemEx(todoItem, strDone, deadline.isBefore(notifyDt), false);//期日7日前とそれ以外をisBeforeで判定
+		}
+		
+		mav.addObject("itemEx",todoItemEx);
+		mav.setViewName("item");
 		return mav;
 	}
 }

@@ -34,7 +34,7 @@ public class TodoItem {
 	private String title;
 	
 	@Column(nullable = false)
-	private long done;
+	private int done;
 	
 	@Column(nullable = false)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")

@@ -9,6 +9,9 @@
 </head>
 <body class="container">
 	<h1 class="display-4 mb-4">TODO一覧</h1>
+	<p>User:<span th:text="${loginUserName}"></span></p>
+	<p>Role:<span th:text="${role}"></span></p>
+	<p>Click <a th:href="@{/logout}">here</a> to logout.</p>
 	<table class="table">
 		<thead>
 			<tr>
@@ -19,6 +22,7 @@
 				<th>作成日</th>
 				<th>期日</th>
 				<th>完了日</th>
+				<th>詳細</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -26,11 +30,12 @@
 				<td th:text="${itemEx.item.id}"></td>
 				<td th:text="${itemEx.item.userName}"></td>
 				<td th:text="${itemEx.item.title}"></td>
-				<td th:text="${itemEx.item.done}"></td>
+				<td th:text="${itemEx.strDone}"></td>
 				<td th:text="${itemEx.item.created}"></td>
-				<td th:if="${itemEx.caution}" th:text="${itemEx.item.deadline}" class="caution" th:classappend="${itemEx.overdue} ? 'overdue'"></td>
-				<td th:if="${!itemEx.caution}" th:text="${itemEx.item.deadline}"></td>
+				<td th:if="${itemEx.caution}" th:text="${itemEx.item.deadline}" class="caution" th:classappend="${itemEx.overdue} ? 'overdue'"></td><!--期日７日以内または超過で表示。デフォルトは赤文字で、期日超過で紫文字にスタイルを上書きする -->
+				<td th:if="${!itemEx.caution}" th:text="${itemEx.item.deadline}"></td><!--それ以外で表示-->
 				<td th:text="${itemEx.item.completion}"></td>
+				<td><a th:href="@{/item/{id}(id=${itemEx.item.id})}">詳細</a></td>
 			</tr>
 		</tbody>
 	</table>

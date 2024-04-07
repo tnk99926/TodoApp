@@ -14,9 +14,7 @@ public class LoginController {
 	@RequestMapping("/")
 	@PreAuthorize("permitAll")
 	public ModelAndView index(ModelAndView mav) {
-		mav.setViewName("index");
-		mav.addObject("title", "index page");
-		mav.addObject("msg", "This is top page.");
+		mav.setViewName("redirect:/list");
 		return mav;
 	}
 	

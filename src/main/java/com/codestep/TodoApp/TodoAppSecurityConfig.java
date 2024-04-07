@@ -29,7 +29,7 @@ public class TodoAppSecurityConfig {
                .anyRequest().permitAll()
                );
        http.formLogin(form -> form
-               .defaultSuccessUrl("/secret")
+               .defaultSuccessUrl("/list")
                .loginPage("/login"));
        http.logout(LogoutConfigurer::permitAll);
 
