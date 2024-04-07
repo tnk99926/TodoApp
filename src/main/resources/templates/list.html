@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>TODO一覧</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>.caution {color: red;} .overdue {color: purple;}</style>
 </head>
 </head>
 <body class="container">
@@ -21,14 +22,15 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="item : ${list}">
-				<td th:text="${item.id}"></td>
-				<td th:text="${item.userName}"></td>
-				<td th:text="${item.title}"></td>
-				<td th:text="${item.done}"></td>
-				<td th:text="${item.created}"></td>
-				<td th:text="${item.deadline}"></td>
-				<td th:text="${item.completion}"></td>
+			<tr th:each="itemEx : ${listEx}">
+				<td th:text="${itemEx.item.id}"></td>
+				<td th:text="${itemEx.item.userName}"></td>
+				<td th:text="${itemEx.item.title}"></td>
+				<td th:text="${itemEx.item.done}"></td>
+				<td th:text="${itemEx.item.created}"></td>
+				<td th:if="${itemEx.caution}" th:text="${itemEx.item.deadline}" class="caution" th:classappend="${itemEx.overdue} ? 'overdue'"></td>
+				<td th:if="${!itemEx.caution}" th:text="${itemEx.item.deadline}"></td>
+				<td th:text="${itemEx.item.completion}"></td>
 			</tr>
 		</tbody>
 	</table>

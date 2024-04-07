@@ -1,5 +1,7 @@
 package com.codestep.TodoApp.controllers;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,10 +48,36 @@ public class TodoController {
 		return mav;
 	}
 	
+	record TodoItemEx(TodoItem item, boolean caution, boolean overdue) {
+	};
+	
 	@GetMapping("/list")
 	public ModelAndView showList(ModelAndView mav) {
 		List<TodoItem> list = todoService.findAll();
-		mav.addObject("list",list);
+		
+		LocalDate now = LocalDate.now();
+		
+		LocalDate notifyDt = now.plusDays(7);
+		
+		List<TodoItemEx> listEx = new ArrayList<>();
+		
+		for(TodoItem todoItem : list) {
+			LocalDate deadline = todoItem.getDeadline();
+			TodoItemEx todoItemEx;
+			if (deadline == null) {
+				todoItemEx = new TodoItemEx(todoItem, false, false);
+			} else if(todoItem.getDone() == 2) {
+				todoItemEx = new TodoItemEx(todoItem, false, false);
+			} else if(deadline.isBefore(now)){
+				todoItemEx = new TodoItemEx(todoItem, true, true);
+			} else{
+				todoItemEx = new TodoItemEx(todoItem, deadline.isBefore(notifyDt), false);
+			}
+			listEx.add(todoItemEx);
+		}
+		
+		
+		mav.addObject("listEx",listEx);
 		mav.setViewName("list");
 		return mav;
 	}
