@@ -80,9 +80,10 @@ public class TodoController {
 			
 			LocalDate deadline = todoItem.getDeadline();
 			TodoItemEx todoItemEx;
+			
 			if (deadline == null) {
 				todoItemEx = new TodoItemEx(todoItem, strDone, false, false);//期日未設定
-			} else if(todoItem.getDone() == 2) {
+			} else if(strDone == "完了") {
 				todoItemEx = new TodoItemEx(todoItem, strDone, false, false);//完了済み
 			} else if(deadline.isBefore(now)){
 				todoItemEx = new TodoItemEx(todoItem, strDone, true, true);//期日超過
@@ -114,7 +115,7 @@ public class TodoController {
 		TodoItemEx todoItemEx;
 		if (deadline == null) {
 			todoItemEx = new TodoItemEx(todoItem, strDone, false, false);//期日未設定
-		} else if(todoItem.getDone() == 2) {
+		} else if(strDone == "完了") {
 			todoItemEx = new TodoItemEx(todoItem, strDone, false, false);//完了済み
 		} else if(deadline.isBefore(now)){
 			todoItemEx = new TodoItemEx(todoItem, strDone, true, true);//期日超過

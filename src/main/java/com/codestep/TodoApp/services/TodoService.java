@@ -39,7 +39,8 @@ public class TodoService {
 	}
 	
 	public String getStrDone(TodoItem todoItem) {
-		switch(todoItem.getDone()) {
+		final int DONE_STATUS = todoItem.getDone();
+		switch(DONE_STATUS) {
 		case 1 ->{
 			return "着手中";
 		}
