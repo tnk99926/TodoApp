@@ -47,4 +47,8 @@ public class TodoItem {
 	@Column(nullable = true)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate completion;
+	
+	public boolean isDone() {
+		return this.done == 2 ? true : false;
+	}
 }
