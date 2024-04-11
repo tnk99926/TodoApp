@@ -17,11 +17,12 @@ public class TodoService {
 	
 	@Autowired
 	TodoRepository todoRepository;
+	final int WAITING = 0;
 	
 	public TodoItem create(String username, TodoItem item) {
 		item.setUserName(username);
 		item.setCreated(LocalDate.now());
-		item.setDone(0);
+		item.setDone(WAITING);
 		todoRepository.saveAndFlush(item);
 		return item;
 	}
