@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>TODO詳細</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>.caution {color: red;} .overdue {color: purple;}</style>
+<style>.normal{color: black;} .caution {color: red;} .overdue {color: purple;}</style>
 </head>
 </head>
 <body class="container">
@@ -32,8 +32,7 @@
 		</tr>
 		<tr >
 			<th>期日</th>
-			<td th:if="${itemEx.caution}" th:text="${itemEx.item.deadline}" class="caution" th:classappend="${itemEx.overdue} ? 'overdue'"></td><!--期日７日以内または超過で表示。デフォルトは赤文字で、期日超過で紫文字にスタイルを上書きする -->
-			<td th:if="${!itemEx.caution}" th:text="${itemEx.item.deadline}"></td><!--それ以外で表示-->
+			<td th:text="${itemEx.item.deadline}" th:classappend="${itemEx.appendClass} ? ${itemEx.appendClass}"></td>
 		</tr>
 		<tr>
 			<th>完了日</th>

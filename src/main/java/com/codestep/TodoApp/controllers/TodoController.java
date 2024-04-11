@@ -54,8 +54,18 @@ public class TodoController {
 		return mav;
 	}
 	
-	record TodoItemEx(TodoItem item, String strDone, boolean caution, boolean overdue) {
+	record TodoItemEx(TodoItem item, String strDone,String appendClass) {
 	};
+	enum dueStatus{
+		NORMAL("normal"),
+		CAUTION("caution"),
+		OVERDUE("overdue");
+		
+		private String htmlClassName;
+		dueStatus(String htmlClassName){
+			this.htmlClassName = htmlClassName;
+		}
+	}
 	
 	@GetMapping("/list")
 	@PreAuthorize("isAuthenticated()")
@@ -79,18 +89,21 @@ public class TodoController {
 			String strDone = todoService.getStrDone(todoItem);
 			
 			LocalDate deadline = todoItem.getDeadline();
+			String appendClass;
+			
 			TodoItemEx todoItemEx;
-			
 			if (deadline == null) {
-				todoItemEx = new TodoItemEx(todoItem, strDone, false, false);//期日未設定
-			} else if(strDone == "完了") {
-				todoItemEx = new TodoItemEx(todoItem, strDone, false, false);//完了済み
+				appendClass = dueStatus.NORMAL.htmlClassName;
+			} else if(todoItem.isDone()) {
+				appendClass = dueStatus.NORMAL.htmlClassName;//完了済み
 			} else if(deadline.isBefore(now)){
-				todoItemEx = new TodoItemEx(todoItem, strDone, true, true);//期日超過
-			} else{
-				todoItemEx = new TodoItemEx(todoItem, strDone, deadline.isBefore(notifyDt), false);//期日7日前とそれ以外をisBeforeで判定
+				appendClass = dueStatus.OVERDUE.htmlClassName;//期日超過
+			} else if(deadline.isBefore(notifyDt)){
+				appendClass = dueStatus.CAUTION.htmlClassName;//期日7日以内
+			} else {
+				appendClass = dueStatus.NORMAL.htmlClassName;//それ以外
 			}
-			
+			todoItemEx = new TodoItemEx(todoItem, strDone, appendClass);
 			listEx.add(todoItemEx);
 		}
 		
@@ -112,16 +125,21 @@ public class TodoController {
 		String strDone = todoService.getStrDone(todoItem);
 		
 		LocalDate deadline = todoItem.getDeadline();
+		String appendClass;
+		
 		TodoItemEx todoItemEx;
 		if (deadline == null) {
-			todoItemEx = new TodoItemEx(todoItem, strDone, false, false);//期日未設定
+			appendClass = dueStatus.NORMAL.htmlClassName;
 		} else if(todoItem.isDone()) {
-			todoItemEx = new TodoItemEx(todoItem, strDone, false, false);//完了済み
+			appendClass = dueStatus.NORMAL.htmlClassName;//完了済み
 		} else if(deadline.isBefore(now)){
-			todoItemEx = new TodoItemEx(todoItem, strDone, true, true);//期日超過
+			appendClass = dueStatus.OVERDUE.htmlClassName;//期日超過
+		} else if(deadline.isBefore(notifyDt)){
+			appendClass = dueStatus.CAUTION.htmlClassName;//期日7日以内
 		} else {
-			todoItemEx = new TodoItemEx(todoItem, strDone, deadline.isBefore(notifyDt), false);//期日7日前とそれ以外をisBeforeで判定
+			appendClass = dueStatus.NORMAL.htmlClassName;//それ以外
 		}
+		todoItemEx = new TodoItemEx(todoItem, strDone, appendClass);
 		
 		mav.addObject("itemEx",todoItemEx);
 		mav.setViewName("item");
