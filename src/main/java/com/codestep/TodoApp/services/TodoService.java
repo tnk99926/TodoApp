@@ -40,16 +40,10 @@ public class TodoService {
 	
 	public String getStrDone(TodoItem todoItem) {
 		final int DONE_STATUS = todoItem.getDone();
-		switch(DONE_STATUS) {
-		case 1 ->{
-			return "着手中";
-		}
-		case 2 ->{
-			return  "完了";
-		}
-		default ->{
-			return  "未着手";
-		}
-	}
+		 return switch(DONE_STATUS) {
+			case 1 -> "着手中";
+			case 2 -> "完了";
+			default ->"未着手";
+		 };
 	}
 }
