@@ -149,8 +149,8 @@ public class TodoController {
 	
 	@PostMapping("/complete")
 	@PreAuthorize("isAuthenticated()")
-	   public ModelAndView completeItem(ModelAndView mav, @RequestParam long id,@RequestParam String progress) {
-			if(progress.equals("inProgress")) {
+	   public ModelAndView completeItem(ModelAndView mav, @RequestParam long id,@RequestParam("in_progress") String progress) {
+			if(progress.equals("in_progress")) {
 				todoService.complete(id, true);
 			} else {
 				todoService.complete(id, false);
