@@ -52,7 +52,7 @@ public class TodoService {
 	
 	public void complete(long id, boolean inProgress) {
 		TodoItem item = todoRepository.getReferenceById(id);
-		if(!inProgress) {
+		if(inProgress) {
 			item.setDone(IN_PROGRESS);
 		} else {
 			item.setDone(DONE);

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.codestep.TodoApp.entities.TodoItem;
@@ -145,4 +146,12 @@ public class TodoController {
 		mav.setViewName("item");
 		return mav;
 	}
+	
+	@PostMapping("/complete")
+	@PreAuthorize("isAuthenticated()")
+	   public ModelAndView completeItem(ModelAndView mav, @RequestParam long id,@RequestParam boolean inProgress) {
+	       todoService.complete(id, inProgress);
+	       mav.setViewName("redirect:/item/" + id);
+	       return mav;
+	   }
 }
