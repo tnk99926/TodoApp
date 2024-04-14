@@ -1,19 +1,24 @@
-package com.codestep.TODOapp;
+package com.codestep.TodoApp;
 
-import org.springframework.boot.test.context.TestConfiguration;
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 
-@TestConfiguration
+@Configuration
 @EnableMethodSecurity
 
-public class TODOappTestSecurityConfig {
+public class TodoAppSecurityConfig {
    @Bean
    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
        
@@ -24,12 +29,18 @@ public class TODOappTestSecurityConfig {
                .anyRequest().permitAll()
                );
        http.formLogin(form -> form
-               .defaultSuccessUrl("/secret")
+               .defaultSuccessUrl("/list")
                .loginPage("/login"));
        http.logout(LogoutConfigurer::permitAll);
 
        return http.build();
    }
    
-  
+   @Autowired
+   private DataSource dataSource;
+   
+   @Bean
+   public UserDetailsManager userDetailsManager() {
+	   return new JdbcUserDetailsManager(this.dataSource);
+   }
 }

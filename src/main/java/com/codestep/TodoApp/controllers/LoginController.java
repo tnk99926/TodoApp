@@ -1,4 +1,4 @@
-package com.codestep.TODOapp;
+package com.codestep.TodoApp.controllers;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -9,14 +9,12 @@ import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
-public class TODOappController {
+public class LoginController {
 	
 	@RequestMapping("/")
 	@PreAuthorize("permitAll")
 	public ModelAndView index(ModelAndView mav) {
-		mav.setViewName("index");
-		mav.addObject("title", "index page");
-		mav.addObject("msg", "This is top page.");
+		mav.setViewName("redirect:/list");
 		return mav;
 	}
 	

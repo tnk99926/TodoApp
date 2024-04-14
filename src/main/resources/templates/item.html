@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="UTF-8">
+<title>TODO詳細</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>.normal{color: black;} .caution {color: red;} .overdue {color: purple;}</style>
+</head>
+</head>
+<body class="container">
+	<h1 class="display-4 mb-4">TODO詳細</h1>
+	<table class="table">
+		<tr>
+			<th>TODO ID</th>
+			<td th:text="${itemEx.item.id}"></td>
+		</tr>
+		<tr>
+			<th>ユーザー名</th>
+			<td th:text="${itemEx.item.userName}"></td>
+		</tr>
+		<tr>
+			<th>TODO名</th>
+			<td th:text="${itemEx.item.title}"></td>
+		</tr>
+		<tr>
+			<th>進捗</th>
+			<td th:text="${itemEx.strDone}"></td>
+		</tr>
+		<tr>
+			<th>作成日</th>
+			<td th:text="${itemEx.item.created}"></td>
+		</tr>
+		<tr >
+			<th>期日</th>
+			<td th:text="${itemEx.item.deadline}" th:classappend="${itemEx.appendClass} ? ${itemEx.appendClass}"></td>
+		</tr>
+		<tr>
+			<th>完了日</th>
+			<td th:text="${itemEx.item.completion}"></td>
+		</tr>
+	</table>
+	<a href="/list">一覧へ戻る</a>
+</html>
