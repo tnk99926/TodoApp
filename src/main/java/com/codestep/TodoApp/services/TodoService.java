@@ -50,7 +50,7 @@ public class TodoService {
 		 };
 	}
 	
-	public void inProgress(long id, boolean inProgress) {
+	public void complete(long id, boolean inProgress) {
 		TodoItem item = todoRepository.getReferenceById(id);
 		if(!inProgress) {
 			item.setDone(IN_PROGRESS);
