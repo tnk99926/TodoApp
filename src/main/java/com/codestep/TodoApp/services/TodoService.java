@@ -54,8 +54,10 @@ public class TodoService {
 		TodoItem item = todoRepository.getReferenceById(id);
 		if(inProgress) {
 			item.setDone(IN_PROGRESS);
+			item.setCompletion(null);
 		} else {
 			item.setDone(DONE);
+			item.setCompletion(LocalDate.now());
 		}
 	}
 }
