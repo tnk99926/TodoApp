@@ -41,8 +41,8 @@
 	</table>
 	<form method="post" class="mt-4" action="" th:action="@{/complete}">
 		<input type="hidden" name="id" value="" th:value="${itemEx.item.id}" />
-		<label>着手中<input type="radio" class="form-check-input" name="in_progress" value="in_progress" checked></label>
-		<label>完了<input type="radio" class="form-check-input" name="in_progress" value="complete"></label><br>
+		<label>着手中<input type="radio" class="form-check-input" name="progress" value="in_progress" checked></label>
+		<label>完了<input type="radio" class="form-check-input" name="progress" value="complete"></label><br>
 		<input type="submit" class="btn btn-primary mt-2 mb-4" value="進捗を更新する"/>
 	</form>
 	<a href="/list">一覧へ戻る</a>
