@@ -119,6 +119,16 @@ public class TodoController {
 	@PreAuthorize("isAuthenticated()")
 	public ModelAndView showItem(ModelAndView mav, @PathVariable int id) {
 		TodoItem todoItem = todoService.getById(id);
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		var user = userDetailsManager.loadUserByUsername(username);
+		
+		boolean notLoginUser = !todoItem.getUserName().equals(user.getUsername());
+		boolean isRoleUser = user.getAuthorities().stream().allMatch(ga -> ga.getAuthority().equals("ROLE_USER"));
+		if(notLoginUser && isRoleUser) {
+				mav.setViewName("redirect:/list");
+				return mav;
+		}
+		
 		LocalDate now = LocalDate.now();
 		
 		LocalDate notifyDt = now.plusDays(7);
@@ -149,7 +159,7 @@ public class TodoController {
 	
 	@PostMapping("/complete")
 	@PreAuthorize("isAuthenticated()")
-	   public ModelAndView completeItem(ModelAndView mav, @RequestParam long id,@RequestParam("in_progress") String progress) {
+	   public ModelAndView completeItem(ModelAndView mav, @RequestParam long id,@RequestParam("progress") String progress) {
 			if(progress.equals("in_progress")) {
 				todoService.complete(id, true);
 			} else {
