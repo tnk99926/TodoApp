@@ -18,6 +18,8 @@ public class TodoService {
 	@Autowired
 	TodoRepository todoRepository;
 	final int WAITING = 0;
+	final int IN_PROGRESS = 1;
+	final int DONE = 2;
 	
 	public TodoItem create(String username, TodoItem item) {
 		item.setUserName(username);
@@ -46,5 +48,16 @@ public class TodoService {
 			case 2 -> "完了";
 			default ->"未着手";
 		 };
+	}
+	
+	public void complete(long id, boolean inProgress) {
+		TodoItem item = todoRepository.getReferenceById(id);
+		if(inProgress) {
+			item.setDone(IN_PROGRESS);
+			item.setCompletion(null);
+		} else {
+			item.setDone(DONE);
+			item.setCompletion(LocalDate.now());
+		}
 	}
 }

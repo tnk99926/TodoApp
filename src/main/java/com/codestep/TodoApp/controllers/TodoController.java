@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.codestep.TodoApp.entities.TodoItem;
@@ -118,6 +119,16 @@ public class TodoController {
 	@PreAuthorize("isAuthenticated()")
 	public ModelAndView showItem(ModelAndView mav, @PathVariable int id) {
 		TodoItem todoItem = todoService.getById(id);
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		var user = userDetailsManager.loadUserByUsername(username);
+		
+		boolean isLoginUser = todoItem.getUserName().equals(user.getUsername());
+		boolean isRoleUser = user.getAuthorities().stream().allMatch(ga -> ga.getAuthority().equals("ROLE_USER"));
+		if(!isLoginUser && isRoleUser) {
+				mav.setViewName("redirect:/list");
+				return mav;
+		}
+		
 		LocalDate now = LocalDate.now();
 		
 		LocalDate notifyDt = now.plusDays(7);
@@ -145,4 +156,28 @@ public class TodoController {
 		mav.setViewName("item");
 		return mav;
 	}
+	
+	@PostMapping("/complete")
+	@PreAuthorize("isAuthenticated()")
+	public ModelAndView completeItem(ModelAndView mav, @RequestParam long id,@RequestParam("progress") String progress) {
+		TodoItem todoItem = todoService.getById(id);
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		var user = userDetailsManager.loadUserByUsername(username);
+		
+		boolean isLoginUser = todoItem.getUserName().equals(user.getUsername());
+		boolean isRoleUser = user.getAuthorities().stream().allMatch(ga -> ga.getAuthority().equals("ROLE_USER"));
+		if(!isLoginUser && isRoleUser) {
+				mav.setViewName("redirect:/list");
+				return mav;
+		}
+		
+			if(progress.equals("in_progress")) {
+				todoService.complete(id, true);
+			} else {
+				todoService.complete(id, false);
+				
+			}
+	       mav.setViewName("redirect:/item/" + id);
+	       return mav;
+	   }
 }
