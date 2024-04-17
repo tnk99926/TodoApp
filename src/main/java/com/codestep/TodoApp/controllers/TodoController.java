@@ -118,16 +118,12 @@ public class TodoController {
 	@GetMapping("/item/{id}")
 	@PreAuthorize("isAuthenticated()")
 	public ModelAndView showItem(ModelAndView mav, @PathVariable int id) {
-		TodoItem todoItem = todoService.getById(id);
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		var user = userDetailsManager.loadUserByUsername(username);
-		
-		boolean isLoginUser = todoItem.getUserName().equals(user.getUsername());
-		boolean isRoleUser = user.getAuthorities().stream().allMatch(ga -> ga.getAuthority().equals("ROLE_USER"));
-		if(!isLoginUser && isRoleUser) {
-				mav.setViewName("redirect:/list");
-				return mav;
+		if(!todoService.isLoginUserOrAdmin(id)) {
+			mav.setViewName("redirect:/list");
+			return mav;
 		}
+		
+		TodoItem todoItem = todoService.getById(id);
 		
 		LocalDate now = LocalDate.now();
 		
@@ -160,24 +156,28 @@ public class TodoController {
 	@PostMapping("/complete")
 	@PreAuthorize("isAuthenticated()")
 	public ModelAndView completeItem(ModelAndView mav, @RequestParam long id,@RequestParam("progress") String progress) {
-		TodoItem todoItem = todoService.getById(id);
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		var user = userDetailsManager.loadUserByUsername(username);
-		
-		boolean isLoginUser = todoItem.getUserName().equals(user.getUsername());
-		boolean isRoleUser = user.getAuthorities().stream().allMatch(ga -> ga.getAuthority().equals("ROLE_USER"));
-		if(!isLoginUser && isRoleUser) {
-				mav.setViewName("redirect:/list");
-				return mav;
+		if(!todoService.isLoginUserOrAdmin(id)) {
+			mav.setViewName("redirect:/list");
+			return mav;
 		}
 		
-			if(progress.equals("in_progress")) {
-				todoService.complete(id, true);
-			} else {
-				todoService.complete(id, false);
-				
-			}
-	       mav.setViewName("redirect:/item/" + id);
-	       return mav;
-	   }
+		if(progress.equals("in_progress")) {
+			todoService.complete(id, true);
+		} else {
+			todoService.complete(id, false);	
+		}
+	    mav.setViewName("redirect:/item/" + id);
+	    return mav;
+	  }
+	
+	@PostMapping("/delete")
+	@PreAuthorize("isAuthenticated()")
+	public ModelAndView deleteItem(ModelAndView mav, @RequestParam long id) {
+		if(todoService.isLoginUserOrAdmin(id)) {
+			todoService.delete(id);
+		}
+		mav.setViewName("redirect:/list");
+		return mav;
+	}
+	
 }

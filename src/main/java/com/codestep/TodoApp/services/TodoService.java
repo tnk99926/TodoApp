@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
 import com.codestep.TodoApp.entities.TodoItem;
@@ -58,6 +60,27 @@ public class TodoService {
 		} else {
 			item.setDone(DONE);
 			item.setCompletion(LocalDate.now());
+		}
+	}
+	
+	public void delete (long id) {
+		todoRepository.deleteById(id);
+	}
+	
+	@Autowired
+	UserDetailsManager userDetailsManager;
+	
+	public boolean isLoginUserOrAdmin(long id) {
+		TodoItem todoItem = this.getById(id);
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		var user = userDetailsManager.loadUserByUsername(username);
+		
+		boolean isLoginUser = todoItem.getUserName().equals(user.getUsername());
+		boolean isRoleAdmin = user.getAuthorities().stream().allMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"));
+		if(isLoginUser || isRoleAdmin) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 }
