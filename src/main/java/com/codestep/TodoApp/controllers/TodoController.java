@@ -180,4 +180,34 @@ public class TodoController {
 		return mav;
 	}
 	
+	@GetMapping("/update/{id}")
+	@PreAuthorize("isAuthenticated()")
+	public ModelAndView showUpdateForm(ModelAndView mav, @PathVariable long id) {
+		if(!todoService.isLoginUserOrAdmin(id)) {
+			mav.setViewName("redirect:/list");
+			return mav;
+		}
+		
+		TodoItem todoItem = todoService.getById(id);
+		mav.addObject("item", todoItem);
+		mav.setViewName("/update");
+		return mav;
+	}
+	
+	@PostMapping("/update")
+	@PreAuthorize("isAuthenticated()")
+	public ModelAndView postUpdateForm(ModelAndView mav, @ModelAttribute("item") @Validated TodoItem item, BindingResult result) {
+		if(!todoService.isLoginUserOrAdmin(item.getId())) {
+			mav.setViewName("redirect:/list");
+			return mav;
+		} 
+		if(result.hasErrors()) {
+			mav.addObject("item", item);
+			mav.setViewName("/update");
+			return mav;
+		} 
+		todoService.update(item.getId(), item.getTitle(), item.getDeadline());
+		mav.setViewName("redirect:/item/" + item.getId());
+		return mav;
+	}
 }
