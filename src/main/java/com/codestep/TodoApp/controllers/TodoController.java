@@ -196,7 +196,7 @@ public class TodoController {
 	
 	@PostMapping("/update")
 	@PreAuthorize("hasAnyRole('USER','ADMIN')")
-	public ModelAndView postUpdateForm(ModelAndView mav, @ModelAttribute("item") @Validated TodoItem item, BindingResult result) {
+	public ModelAndView postUpdateForm(ModelAndView mav, @ModelAttribute("item") @Validated TodoItem item, BindingResult result, @RequestParam("done-reset") String doneReset ) {
 		if(!todoService.isLoginUserOrAdmin(item.getId())) {
 			mav.setViewName("redirect:/list");
 			return mav;
@@ -206,7 +206,7 @@ public class TodoController {
 			mav.setViewName("/update");
 			return mav;
 		} 
-		todoService.update(item.getId(), item.getTitle(), item.getDeadline());
+		todoService.update(item.getId(), item.getTitle(), item.getDeadline(), doneReset);
 		mav.setViewName("redirect:/item/" + item.getId());
 		return mav;
 	}
