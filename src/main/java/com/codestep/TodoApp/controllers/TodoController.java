@@ -32,7 +32,7 @@ public class TodoController {
 	
 	
 	@GetMapping("/add")
-	@PreAuthorize("isAuthenticated()")
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public ModelAndView showAddForm(ModelAndView mav, @ModelAttribute TodoItem item) {
 		mav.addObject("item", item);
 		mav.setViewName("/add");
@@ -40,7 +40,7 @@ public class TodoController {
 	}
 	
 	@PostMapping("/add")
-	@PreAuthorize("isAuthenticated()")
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public ModelAndView PostAddForm(ModelAndView mav, @ModelAttribute("item") @Validated TodoItem item, BindingResult result) {
 		if (result.hasErrors()) {
 			mav.addObject("item", item);
@@ -69,7 +69,7 @@ public class TodoController {
 	}
 	
 	@GetMapping("/list")
-	@PreAuthorize("isAuthenticated()")
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public ModelAndView showList(ModelAndView mav) {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		var user = userDetailsManager.loadUserByUsername(username);
@@ -116,7 +116,7 @@ public class TodoController {
 	}
 	
 	@GetMapping("/item/{id}")
-	@PreAuthorize("isAuthenticated()")
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public ModelAndView showItem(ModelAndView mav, @PathVariable int id) {
 		if(!todoService.isLoginUserOrAdmin(id)) {
 			mav.setViewName("redirect:/list");
@@ -154,7 +154,7 @@ public class TodoController {
 	}
 	
 	@PostMapping("/complete")
-	@PreAuthorize("isAuthenticated()")
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public ModelAndView completeItem(ModelAndView mav, @RequestParam long id,@RequestParam("progress") String progress) {
 		if(!todoService.isLoginUserOrAdmin(id)) {
 			mav.setViewName("redirect:/list");
@@ -171,7 +171,7 @@ public class TodoController {
 	  }
 	
 	@PostMapping("/delete")
-	@PreAuthorize("isAuthenticated()")
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public ModelAndView deleteItem(ModelAndView mav, @RequestParam long id) {
 		if(todoService.isLoginUserOrAdmin(id)) {
 			todoService.delete(id);
@@ -181,7 +181,7 @@ public class TodoController {
 	}
 	
 	@GetMapping("/update/{id}")
-	@PreAuthorize("isAuthenticated()")
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public ModelAndView showUpdateForm(ModelAndView mav, @PathVariable long id) {
 		if(!todoService.isLoginUserOrAdmin(id)) {
 			mav.setViewName("redirect:/list");
@@ -195,7 +195,7 @@ public class TodoController {
 	}
 	
 	@PostMapping("/update")
-	@PreAuthorize("isAuthenticated()")
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public ModelAndView postUpdateForm(ModelAndView mav, @ModelAttribute("item") @Validated TodoItem item, BindingResult result) {
 		if(!todoService.isLoginUserOrAdmin(item.getId())) {
 			mav.setViewName("redirect:/list");
