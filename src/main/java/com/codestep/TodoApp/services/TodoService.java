@@ -84,9 +84,13 @@ public class TodoService {
 		}
 	}
 	
-	public void update(long id, String title, LocalDate deadline) {
+	public void update(long id, String title, LocalDate deadline, String doneReset) {
 		TodoItem item = todoRepository.getReferenceById(id);
 		item.setTitle(title);
 		item.setDeadline(deadline);
+		if(doneReset.equals("reset")) {
+			item.setDone(WAITING);
+			item.setCompletion(null);
+		}
 	}
 }
