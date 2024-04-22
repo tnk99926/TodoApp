@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="UTF-8">
+<title>TODO更新</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>.err {color: red;}</style>
+</head>
+</head>
+<body class="container">
+	<h1 class="display-4 mb-4">TODO更新</h1>
+	<form method="post" action="" th:action="@{/update}" th:object="${item}"  onsubmit="return check()">
+		<input type="hidden" name="id" value="" th:value="*{id}" />
+		<label for="title">TODO名</label>
+		<input type="text" class="me-1 form-control" name="title" id="title" th:value="*{title}"><br>
+		<div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" th:errorclass="err"></div>
+		<label for="deadline">期日</label>
+		<input type="date" class="me-1  form-control" name="deadline" id="deadline" th:value="*{deadline}"><br>
+		<div th:if="${#fields.hasErrors('deadline')}" th:errors="*{deadline}" th:errorclass="err"></div>
+		<input type="submit" class="btn btn-primary px-5 py-2 mt-2 mb-3" value="更新" ><br>
+		<a th:href="@{/item/{id}(id=*{id})}">一覧へ戻る</a>
+	</form>
+	<script>
+	function check(){
+	return window.confirm('TODOを更新します。よろしいですか？');
+	}
+	</script>
+</body>
+</html>

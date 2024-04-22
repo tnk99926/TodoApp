@@ -43,11 +43,12 @@
 		<input type="hidden" name="id" value="" th:value="${itemEx.item.id}" />
 		<label>着手中<input type="radio" class="form-check-input" name="progress" value="in_progress" checked></label>
 		<label>完了<input type="radio" class="form-check-input" name="progress" value="complete"></label><br>
-		<input type="submit" class="btn btn-primary mt-2 mb-1" value="進捗を更新する"/>
+		<input type="submit" class="btn btn-primary mt-2 mb-1" value="進捗状態を変更する"/>
 	</form>
-	<form method="post" class="mt-4" action="" th:action="@{/delete}" onsubmit="return check()">
+	<a th:href="@{/update/{id}(id=${itemEx.item.id})}" class="btn btn-success mt-3" >TODOの更新</a>
+	<form method="post" class="mt-2" action="" th:action="@{/delete}" onsubmit="return check()">
 		<input type="hidden" name="id" value="" th:value="${itemEx.item.id}" />
-		<input type="submit" class="btn btn-danger mb-4" value="削除" />
+		<input type="submit" class="btn btn-danger mb-4" value="TODOの削除" />
 	</form>
 	<a href="/list">一覧へ戻る</a>
 	<script>
