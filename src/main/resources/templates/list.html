@@ -9,9 +9,9 @@
 </head>
 <body class="container">
 	<h1 class="display-4 mb-4">TODO一覧</h1>
-	<p>User:<span th:text="${loginUserName}"></span></p>
-	<p>Role:<span th:text="${role}"></span></p>
-	<p>Click <a th:href="@{/logout}">here</a> to logout.</p>
+	<p>ユーザー名:<span th:text="${loginUserName}"></span></p>
+	<a th:href="@{/logout}">ログアウトする</a></p>
+	<a href="/">トップページへ戻る</a>
 	<table class="table">
 		<thead>
 			<tr>
