@@ -9,8 +9,10 @@
 </head>
 <body class="container">
 	<h1 class="display-4 mb-4">TODO一覧</h1>
+	<p class="caution" th:text="${errmsg}"></p>
 	<p>ユーザー名:<span th:text="${loginUserName}"></span></p>
-	<a th:href="@{/logout}">ログアウトする</a></p>
+	<a href="/add">TODOを追加する</a><br>
+	<a th:href="@{/logout}">ログアウトする</a><br>
 	<a href="/">トップページへ戻る</a>
 	<table class="table">
 		<thead>
