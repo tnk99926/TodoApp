@@ -1,7 +1,6 @@
 package com.codestep.TodoApp.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -15,7 +14,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class UserController {
 	
 	@GetMapping("/user/add")
-	@PreAuthorize("permitAll")
 	public ModelAndView showAddForm(ModelAndView mav) {
 		mav.setViewName("/user/add");
 		return mav;
@@ -25,7 +23,6 @@ public class UserController {
 	UserDetailsManager userDetailsManager;
 	
 	@PostMapping("/user/add")
-	@PreAuthorize("permitAll")
 	public ModelAndView postAddForm(@RequestParam String username, @RequestParam String password, @RequestParam String role, ModelAndView mav) {
 		var user = User
 				.withUsername(username)
