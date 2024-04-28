@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Controller;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codestep.TodoApp.entities.TodoItem;
 import com.codestep.TodoApp.services.TodoService;
@@ -32,7 +32,6 @@ public class TodoController {
 	
 	
 	@GetMapping("/add")
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public ModelAndView showAddForm(ModelAndView mav, @ModelAttribute TodoItem item) {
 		mav.addObject("item", item);
 		mav.setViewName("/add");
@@ -40,7 +39,6 @@ public class TodoController {
 	}
 	
 	@PostMapping("/add")
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public ModelAndView PostAddForm(ModelAndView mav, @ModelAttribute("item") @Validated TodoItem item, BindingResult result) {
 		if (result.hasErrors()) {
 			mav.addObject("item", item);
@@ -69,8 +67,7 @@ public class TodoController {
 	}
 	
 	@GetMapping("/list")
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
-	public ModelAndView showList(ModelAndView mav) {
+	public ModelAndView showList(ModelAndView mav, @ModelAttribute("errmsg") String errMsg) {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		var user = userDetailsManager.loadUserByUsername(username);
 		List<TodoItem> list;
@@ -111,103 +108,127 @@ public class TodoController {
 		mav.addObject("loginUserName",username);
 		mav.addObject("role",user.getAuthorities());
 		mav.addObject("listEx",listEx);
+		mav.addObject("errmsg", errMsg);
 		mav.setViewName("list");
 		return mav;
 	}
 	
 	@GetMapping("/item/{id}")
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
-	public ModelAndView showItem(ModelAndView mav, @PathVariable int id) {
-		if(!todoService.isLoginUserOrAdmin(id)) {
-			mav.setViewName("redirect:/list");
+	public ModelAndView showItem(ModelAndView mav, @PathVariable int id, RedirectAttributes redirectAttributes) {
+		try {
+			if(!todoService.isLoginUserOrAdmin(id)) {
+				mav.setViewName("redirect:/list");
+				return mav;
+			}
+			TodoItem todoItem = todoService.getById(id);
+			
+			LocalDate now = LocalDate.now();
+			
+			LocalDate notifyDt = now.plusDays(7);
+			
+			String strDone = todoService.getStrDone(todoItem);
+			
+			LocalDate deadline = todoItem.getDeadline();
+			String appendClass;
+			
+			TodoItemEx todoItemEx;
+			if (deadline == null) {
+				appendClass = dueStatus.NORMAL.htmlClassName;
+			} else if(todoItem.isDone()) {
+				appendClass = dueStatus.NORMAL.htmlClassName;//完了済み
+			} else if(deadline.isBefore(now)){
+				appendClass = dueStatus.OVERDUE.htmlClassName;//期日超過
+			} else if(deadline.isBefore(notifyDt)){
+				appendClass = dueStatus.CAUTION.htmlClassName;//期日7日以内
+			} else {
+				appendClass = dueStatus.NORMAL.htmlClassName;//それ以外
+			}
+			todoItemEx = new TodoItemEx(todoItem, strDone, appendClass);
+			
+			mav.addObject("itemEx",todoItemEx);
+			mav.setViewName("item");
+			return mav;
+		} catch(Exception e) {
+			redirectAttributes.addFlashAttribute("errmsg", "TODO ID=" + id + "の詳細表示に失敗しました。");
+	    	mav.setViewName("redirect:/list");
 			return mav;
 		}
-		
-		TodoItem todoItem = todoService.getById(id);
-		
-		LocalDate now = LocalDate.now();
-		
-		LocalDate notifyDt = now.plusDays(7);
-		
-		String strDone = todoService.getStrDone(todoItem);
-		
-		LocalDate deadline = todoItem.getDeadline();
-		String appendClass;
-		
-		TodoItemEx todoItemEx;
-		if (deadline == null) {
-			appendClass = dueStatus.NORMAL.htmlClassName;
-		} else if(todoItem.isDone()) {
-			appendClass = dueStatus.NORMAL.htmlClassName;//完了済み
-		} else if(deadline.isBefore(now)){
-			appendClass = dueStatus.OVERDUE.htmlClassName;//期日超過
-		} else if(deadline.isBefore(notifyDt)){
-			appendClass = dueStatus.CAUTION.htmlClassName;//期日7日以内
-		} else {
-			appendClass = dueStatus.NORMAL.htmlClassName;//それ以外
-		}
-		todoItemEx = new TodoItemEx(todoItem, strDone, appendClass);
-		
-		mav.addObject("itemEx",todoItemEx);
-		mav.setViewName("item");
-		return mav;
 	}
 	
 	@PostMapping("/complete")
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
-	public ModelAndView completeItem(ModelAndView mav, @RequestParam long id,@RequestParam("progress") String progress) {
-		if(!todoService.isLoginUserOrAdmin(id)) {
-			mav.setViewName("redirect:/list");
-			return mav;
-		}
+	public ModelAndView completeItem(ModelAndView mav, @RequestParam long id,@RequestParam("progress") String progress, RedirectAttributes redirectAttributes) {
 		
-		if(progress.equals("in_progress")) {
-			todoService.complete(id, true);
-		} else {
-			todoService.complete(id, false);	
-		}
-	    mav.setViewName("redirect:/item/" + id);
-	    return mav;
+	    try {
+	    	if(!todoService.isLoginUserOrAdmin(id)) {
+				mav.setViewName("redirect:/list");
+				return mav;
+			}
+			if(progress.equals("in_progress")) {
+				todoService.complete(id, true);
+			} else {
+				todoService.complete(id, false);	
+			}
+		    mav.setViewName("redirect:/item/" + id);
+		    return mav;
+		    
+	    } catch (Exception e){
+	    	redirectAttributes.addFlashAttribute("errmsg", "TODO ID=" + id + "の進捗状態の変更に失敗しました。");
+	    	mav.setViewName("redirect:/list");
+			return mav;
+	    }
 	  }
 	
 	@PostMapping("/delete")
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
-	public ModelAndView deleteItem(ModelAndView mav, @RequestParam long id) {
-		if(todoService.isLoginUserOrAdmin(id)) {
-			todoService.delete(id);
+	public ModelAndView deleteItem(ModelAndView mav, @RequestParam long id, RedirectAttributes redirectAttributes) {
+		try {
+			if(todoService.isLoginUserOrAdmin(id)) {
+				todoService.delete(id);
+			}
+		} catch(Exception e) {
+			redirectAttributes.addFlashAttribute("errmsg", "TODO ID=" + id + "の削除に失敗しました。");
 		}
 		mav.setViewName("redirect:/list");
 		return mav;
 	}
 	
 	@GetMapping("/update/{id}")
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
-	public ModelAndView showUpdateForm(ModelAndView mav, @PathVariable long id) {
-		if(!todoService.isLoginUserOrAdmin(id)) {
+	public ModelAndView showUpdateForm(ModelAndView mav, @PathVariable long id, RedirectAttributes redirectAttributes) {
+		try {
+			if(!todoService.isLoginUserOrAdmin(id)) {
+				mav.setViewName("redirect:/list");
+				return mav;
+			}
+			TodoItem todoItem = todoService.getById(id);
+			mav.addObject("item", todoItem);
+			mav.setViewName("/update");
+			return mav;
+		} catch(Exception e) {
+			redirectAttributes.addFlashAttribute("errmsg", "TODO ID=" + id + "の更新画面の表示に失敗しました。");
+			mav.setViewName("redirect:/list");
+			return mav;
+		}
+	}
+	
+	@PostMapping("/update")
+	public ModelAndView postUpdateForm(ModelAndView mav, @ModelAttribute("item") @Validated TodoItem item, BindingResult result, @RequestParam("done-reset") String doneReset, RedirectAttributes redirectAttributes ) {
+		try {
+			if(!todoService.isLoginUserOrAdmin(item.getId())) {
+				mav.setViewName("redirect:/list");
+				return mav;
+			} 
+			if(result.hasErrors()) {
+				mav.addObject("item", item);
+				mav.setViewName("/update");
+				return mav;
+			} 
+			todoService.update(item.getId(), item.getTitle(), item.getDeadline(), doneReset);
+			mav.setViewName("redirect:/item/" + item.getId());
+			return mav;
+		} catch(Exception e) {
+			redirectAttributes.addFlashAttribute("errmsg", "TODO ID=" + item.getId()+ "の更新に失敗しました。");
 			mav.setViewName("redirect:/list");
 			return mav;
 		}
 		
-		TodoItem todoItem = todoService.getById(id);
-		mav.addObject("item", todoItem);
-		mav.setViewName("/update");
-		return mav;
-	}
-	
-	@PostMapping("/update")
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
-	public ModelAndView postUpdateForm(ModelAndView mav, @ModelAttribute("item") @Validated TodoItem item, BindingResult result, @RequestParam("done-reset") String doneReset ) {
-		if(!todoService.isLoginUserOrAdmin(item.getId())) {
-			mav.setViewName("redirect:/list");
-			return mav;
-		} 
-		if(result.hasErrors()) {
-			mav.addObject("item", item);
-			mav.setViewName("/update");
-			return mav;
-		} 
-		todoService.update(item.getId(), item.getTitle(), item.getDeadline(), doneReset);
-		mav.setViewName("redirect:/item/" + item.getId());
-		return mav;
 	}
 }
