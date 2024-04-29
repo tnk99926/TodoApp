@@ -149,8 +149,9 @@ public class TodoController {
 			mav.setViewName("item");
 			return mav;
 		} catch(Exception e) {
+			e.printStackTrace();
 			redirectAttributes.addFlashAttribute("errmsg", "TODO ID=" + id + "の詳細表示に失敗しました。");
-	    	mav.setViewName("redirect:/list");
+			mav.setViewName("redirect:/list");
 			return mav;
 		}
 	}
@@ -172,8 +173,9 @@ public class TodoController {
 		    return mav;
 		    
 	    } catch (Exception e){
-	    	redirectAttributes.addFlashAttribute("errmsg", "TODO ID=" + id + "の進捗状態の変更に失敗しました。");
-	    	mav.setViewName("redirect:/list");
+	   		e.printStackTrace();
+	   		redirectAttributes.addFlashAttribute("errmsg", "TODO ID=" + id + "の進捗状態の変更に失敗しました。");
+	   		mav.setViewName("redirect:/list");
 			return mav;
 	    }
 	  }
@@ -185,6 +187,7 @@ public class TodoController {
 				todoService.delete(id);
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			redirectAttributes.addFlashAttribute("errmsg", "TODO ID=" + id + "の削除に失敗しました。");
 		}
 		mav.setViewName("redirect:/list");
@@ -203,6 +206,7 @@ public class TodoController {
 			mav.setViewName("/update");
 			return mav;
 		} catch(Exception e) {
+			e.printStackTrace();
 			redirectAttributes.addFlashAttribute("errmsg", "TODO ID=" + id + "の更新画面の表示に失敗しました。");
 			mav.setViewName("redirect:/list");
 			return mav;
@@ -225,6 +229,7 @@ public class TodoController {
 			mav.setViewName("redirect:/item/" + item.getId());
 			return mav;
 		} catch(Exception e) {
+			e.printStackTrace();
 			redirectAttributes.addFlashAttribute("errmsg", "TODO ID=" + item.getId()+ "の更新に失敗しました。");
 			mav.setViewName("redirect:/list");
 			return mav;
