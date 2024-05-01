@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
+@PreAuthorize("hasAnyRole('USER','ADMIN')")
 public class TodoService {
 	
 	@Autowired
@@ -84,9 +86,14 @@ public class TodoService {
 		}
 	}
 	
-	public void update(long id, String title, LocalDate deadline) {
+	public void update(long id, String title, LocalDate deadline, String doneReset) {
 		TodoItem item = todoRepository.getReferenceById(id);
 		item.setTitle(title);
 		item.setDeadline(deadline);
+		if(doneReset.equals("reset")) {
+			item.setDone(WAITING);
+			item.setCompletion(null);
+		}
 	}
+	
 }

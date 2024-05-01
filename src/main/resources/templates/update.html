@@ -17,6 +17,9 @@
 		<label for="deadline">期日</label>
 		<input type="date" class="me-1  form-control" name="deadline" id="deadline" th:value="*{deadline}"><br>
 		<div th:if="${#fields.hasErrors('deadline')}" th:errors="*{deadline}" th:errorclass="err"></div>
+		<label for="done-reset">進捗状態をリセットする</label>
+		<input type="hidden" value="keep" name="done-reset">
+		<input type="checkbox" name="done-reset" value="reset"><br>
 		<input type="submit" class="btn btn-primary px-5 py-2 mt-2 mb-3" value="更新" ><br>
 		<a th:href="@{/item/{id}(id=*{id})}">一覧へ戻る</a>
 	</form>
